@@ -38,6 +38,7 @@ class OwnerHotelView(viewsets.ModelViewSet):
         '''
             list of hotels paginations the curtomer and owner and admin can see
         '''
+
         page = self.paginate_queryset(self.queryset)
         if page is not None:
             response = self.get_paginated_response(HotelSerializer(page, many=True).data).data
@@ -91,24 +92,28 @@ class OwnerHotelView(viewsets.ModelViewSet):
 
     @action(methods=["POST"], detail=True)
     def reserved_room_filter(self, request, pk):
+        '''
+            this method for informations reserved room
+            and filter data posted to filtering
+        '''
         try:
             obj = Room.objects.get(pk=pk)
         except ObjectDoesNotExist:
             return Response({"message": "object does not exsist"}, status=status.HTTP_404_NOT_FOUND)
         reserved = obj.reserveds.all()
-        if reserved:
-            if request.data:
-                reserved = ReservedFilter(data=request.data, queryset=reserved).qs
+        if request.data:
+            reserved = ReservedFilter(data=request.data, queryset=reserved).qs
+            if reserved:
                 page = self.paginate_queryset(reserved)
                 if page is not None:
                     response = self.get_paginated_response(ReserveSerializer(page, many=True).data).data
                 else:
                     response = ReserveSerializer(reserved, many=True).data
                 return Response(response, status=status.HTTP_200_OK)
-            page = self.paginate_queryset(reserved)
-            if page is not None:
-                response = self.get_paginated_response(ReserveSerializer(page, many=True).data).data
-            else:
-                response = ReserveSerializer(reserved, many=True).data
-            return Response(response, status=status.HTTP_200_OK)
-        return Response({"message": "this room is empty reserved"}, status=status.HTTP_200_OK)
+        page = self.paginate_queryset(reserved)
+        if page is not None:
+            response = self.get_paginated_response(ReserveSerializer(page, many=True).data).data
+        else:
+            response = ReserveSerializer(reserved, many=True).data
+        return Response(response, status=status.HTTP_200_OK)
+

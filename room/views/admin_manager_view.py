@@ -8,6 +8,7 @@ from rest_framework import viewsets
 from room.models import County, Province, OwnerProfile, CustomerProfile
 from rest_framework.decorators import action
 from room.pagination import CustomPagination
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class AdminSettingCounty(viewsets.ModelViewSet):
@@ -50,14 +51,20 @@ class AdminSettingUsers(viewsets.ModelViewSet):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        if request.method == "GEt":
+        if request.method == "GET":
             if pk == "0":
                 self.queryset = CustomerProfile.objects.all()
-                serializer = CustomerSerializer(self.queryset, many=True)
+                page = self.paginate_queryset(self.queryset)
+                if page is not None:
+                    response = self.get_paginated_response(CustomerSerializer(page, many=True).data).data
+                else:
+                    response = CustomerSerializer(self.queryset, many=True).data
+
+                return Response(response, status=status.HTTP_200_OK)
+            else:
+                self.queryset = get_object_or_404(CustomerProfile, pk=pk)
+                serializer = CustomerSerializer(self.queryset)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            self.queryset = get_object_or_404(CustomerProfile, pk=pk)
-            serializer = CustomerSerializer(self.queryset)
-            return Response(serializer.data, status=status.HTTP_200_OK)
 
         if request.method == "PATCH":
             self.queryset = get_object_or_404(CustomerProfile, pk=pk)

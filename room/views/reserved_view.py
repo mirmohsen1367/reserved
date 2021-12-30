@@ -1,6 +1,8 @@
 
 from rest_framework import status
 from rest_framework import viewsets
+
+from room.filters import ReservedFilter
 from room.models import Reserved, CustomerProfile
 from room.serializer.reserve_serializer import ReserveSerializer
 from django.core.exceptions import ObjectDoesNotExist
@@ -31,5 +33,3 @@ class ReserveView(viewsets.ModelViewSet):
             self.perform_create(serializer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Reserved(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-

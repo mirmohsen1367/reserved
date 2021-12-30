@@ -5,7 +5,8 @@ from room.serializer.admin_setting_serializer import CountySerializer, OwnerProf
 
 
 class RoomSerializer(serializers.ModelSerializer):
-    id = serializers.CharField()
+    id = serializers.CharField(required=False)
+
     class Meta:
         model = Room
         fields = ("id", "room_no", "room_type", "no_of_beds")
@@ -20,7 +21,8 @@ class HotelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hotel
-        fields = ("name", "address", "phone_number", "county", "rating", "owner_profile", "rooms", 'id')
+        fields = ("name", "address", "phone_number", "county", "rating",
+                  "owner_profile", "rooms", "id", "cover_link")
 
     def create(self, validated_data):
         rooms_data = validated_data.pop('rooms')

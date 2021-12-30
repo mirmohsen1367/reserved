@@ -26,7 +26,7 @@ class HolteAdmin(admin.ModelAdmin):
     list_display_links = ('name',)
     list_filter = ("name", 'county__name')
     search_fields = ("name",)
-    fieldsets = ((None, {'fields': ("name", "address", 'county', 'rating')}),
+    fieldsets = ((None, {'fields': ("name", "address", 'county', 'rating', 'img')}),
                  ('owner', {'fields': ('owner_profile',)}))
 
 

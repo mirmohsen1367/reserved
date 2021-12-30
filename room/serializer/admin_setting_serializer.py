@@ -24,14 +24,21 @@ class HotelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hotel
-        fields = "__all__"
+        fields = ("name", "address", "phone_number", "county", "rating",
+                  "owner_profile", "rooms", "id", "cover_link")
 
 
 class RoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Room
-        fields = '__all__'
+        fields = ('room_no', 'room_type', 'no_of_beds', 'hotel', "id")
+
+    def to_representation(self, instance):
+        response = super(RoomSerializer, self).to_representation(instance)
+        response["room_type"] = instance.get_room_type_display()
+        response["hotel"] = HotelSerializer(instance.hotel).data
+        return response
 
 
 class UserSerializer(serializers.ModelSerializer):

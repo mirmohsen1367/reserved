@@ -2,7 +2,7 @@
 from rest_framework import serializers
 from room.models import Reserved
 from django.db.models import Q
-from room.serializer.admin_setting_serializer import CustomerSerializer
+from room.serializer.admin_setting_serializer import CustomerSerializer, RoomSerializer
 
 
 class ReserveSerializer(serializers.ModelSerializer):
@@ -30,6 +30,7 @@ class ReserveSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         response = super(ReserveSerializer, self).to_representation(instance)
         response["customer"] = CustomerSerializer(instance.customer).data
+        response['room'] = RoomSerializer(instance.room).data
         return response
 
     def create(self, validated_data):

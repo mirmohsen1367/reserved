@@ -14,7 +14,7 @@ class HotelsReportView(ModelViewSet):
     serializer_class = ReserveSerializer
 
     @action(methods=["get"], detail=True)
-    def reports_reserved(self, request, pk):
+    def reports(self, request, pk):
         '''
         this method for reports of hotels rooms and response of browser
         :param request: data params from_date and to_date params is filtering

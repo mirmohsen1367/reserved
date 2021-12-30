@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from room.user_manager import CustomUserManager
 from room.validator import PhoneValidator, CodeValidators
-
+from django.conf import settings
 
 class Province(models.Model):
     name = models.CharField(max_length=20)
@@ -29,6 +29,10 @@ class County(models.Model):
 
 
 class Hotel(models.Model):
+
+    def file_directory_path(instance, filename):
+        return 'hotel/{1}'.format(str(instance.id), filename)
+
     RATING_RANGE = (
         ('1', '1'),
         ('2', '2'),
@@ -38,14 +42,20 @@ class Hotel(models.Model):
     )
     name = models.CharField(max_length=100)
     address = models.TextField(max_length=50)
+    img = models.FileField(upload_to=file_directory_path, null=True, blank=True)
     phone_number = models.CharField(validators=[PhoneValidator()], max_length=17)
     county = models.ForeignKey(County, on_delete=models.CASCADE,
                                related_name='hotel_countys', related_query_name='hotel_county')
-    rating = models.IntegerField(choices=RATING_RANGE)
+    rating = models.CharField(choices=RATING_RANGE, max_length=2)
     owner_profile = models.ForeignKey('OwnerProfile', on_delete=models.CASCADE,
                                       related_name='hotels'
                                       )
 
+    @property
+    def cover_link(self):
+        if self.img is not None:
+            return f"{settings.IMAGE_URL_SERVE}{settings.MEDIA_URL}{self.img}"
+        return None
     class Meta:
         db_table = 'hotel'
         ordering = ('rating',)
@@ -58,8 +68,8 @@ class Room(models.Model):
         ('suite', 'SUITE'),
 
     )
-    room_no = models.IntegerField(default=101)
-    room_type = models.CharField(max_length=200, default='standard')
+    room_no = models.IntegerField(default=101, unique=True)
+    room_type = models.CharField(max_length=200, default='normal', choices=TYPE_ROOM)
     no_of_beds = models.IntegerField(default=3)
     hotel = models.ForeignKey(Hotel, related_name='rooms',
                               related_query_name='room', on_delete=models.CASCADE)
