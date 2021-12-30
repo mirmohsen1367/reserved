@@ -1,0 +1,67 @@
+{% load static %}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ar">
+
+<head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+	<title>hotel_reports</title>
+
+</head>
+<style>
+
+    table{
+        table-layout: fixed;
+          border-collapse: collapse;
+        font-size: 12px;
+    }
+    th{
+        border: 1px solid black;
+    }
+    td{
+         border: 1px solid black;
+
+    }
+</style>
+<h1>hotel reserved reports</h1>
+<body>
+	<div class="limiter">
+		<div class="container-table100">
+			<div class="wrap-table100">
+				<div class="table100">
+					<table>
+						<thead>
+							<tr class="table100-head">
+								<th class="column1">Hotel</th>
+								<th class="column2">county</th>
+								<th class="column3"> room_no </th>
+								<th class="column4"> room_type</th>
+								<th class="column5">no_of_beds</th>
+								<th class="column6">from_date</th>
+                                <th class="column7">to_date</th>
+
+							</tr>
+						</thead>
+
+						<tbody>
+                            {% for res in reserved %}
+							<tr>
+								<td class="column1">{{res.room.hotel.name}}</td>
+								<td class="column2">{{res.room.hotel.county.name}}</td>
+								<td class="column3">{{res.room.room_no}}</td>
+								<td class="column4">{{ res.room.room_type}}</td>
+								<td class="column5">{{ res.room.no_of_beds  }}</td>
+								<td class="column6">{{ res.from_date}}</td>
+                                <td class="column7">{{ res.to_date}}</td>
+
+							</tr>
+                            {% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
